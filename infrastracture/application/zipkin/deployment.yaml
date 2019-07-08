@@ -1,0 +1,34 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: fengxin58
+spec:
+  selector:
+    matchLabels:
+      k8s-app: zipkin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: zipkin
+    spec:
+      containers:
+      - name: zipkin
+        image: openzipkin/zipkin:2.6.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9411
+        env:
+        - name: STORAGE_TYPE
+          value: mysql
+        - name: MYSQL_HOST
+          value: rm-bp1ggm262x1ut0v63o.mysql.rds.aliyuncs.com          
+        - name: MYSQL_USER
+          value: sleuth
+        - name: MYSQL_PASS
+          value: J7nn83cm0243
+        - name: KAFKA_ZOOKEEPER
+          value: zk-cs.default.svc.cluster.local:2181
+        - name: KAFKA_TOPIC
+          value: zipkin

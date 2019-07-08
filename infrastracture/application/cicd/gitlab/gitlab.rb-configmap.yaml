@@ -1,0 +1,1 @@
+kubectl create configmap gitlab.rb --from-file=gitlab.rb --namespace ci

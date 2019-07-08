@@ -1,0 +1,9 @@
+apiVersion: "config.istio.io/v1alpha2"
+kind: RbacConfig
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mode: ON_WITH_INCLUSION
+  inclusion:
+    namespaces: ["fengxin58-common-stage"]

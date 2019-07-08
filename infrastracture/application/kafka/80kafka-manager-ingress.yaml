@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kafka-manager-ingress
+  namespace: kafka
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: kafka-manager.suerlink.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kafka-manager
+          servicePort: 9000

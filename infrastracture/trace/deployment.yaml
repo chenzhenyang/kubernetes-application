@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: istio-trace-samples
+spec:
+  selector:
+    matchLabels:
+      app: istio-trace-samples
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: istio-trace-samples
+    spec:
+      imagePullSecrets:
+      - name: aliyun-registry-key
+      containers:
+      - name: istio-trace-samples
+        image: registry.cn-hangzhou.aliyuncs.com/fengxin58/istio-trace-samples:0.0.1-SNAPSHOT
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

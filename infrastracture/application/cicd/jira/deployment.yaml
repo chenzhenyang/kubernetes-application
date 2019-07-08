@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  namespace: ci
+  name: jira
+spec:
+  selector:
+    matchLabels:
+      app: jira
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jira
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+         claimName: jira
+      containers:
+      - name: jira
+        image: idoall/ubuntu16.04-jira:7.2.7
+        ports:
+        - name: http-a
+          containerPort: 8085
+        - name: http-b
+          containerPort: 8080
+        - name: http-c
+          containerPort: 8443
+        - name: http-d
+          containerPort: 8090
+        - name: ssh
+          containerPort: 22
+        volumeMounts:
+        - name: data
+          mountPath: /opt/atlassian
+

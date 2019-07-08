@@ -1,0 +1,52 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: uaa
+spec:
+  selector:
+    matchLabels:
+      app: uaa
+      version: 4.18.0
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: uaa
+        version: 4.18.0
+    spec:
+      imagePullSecrets:
+      - name: aliyun-registry-key
+      volumes:
+      - name: uaa-config
+        configMap:
+          name: uaa-configuration
+      containers:
+      - name: uaa
+        volumeMounts:
+        - name: uaa-config
+          mountPath: /etc/uaa
+        image: registry.cn-hangzhou.aliyuncs.com/fengxin58/uaa:4.18.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: issuer.uri
+          value: https://uaa-stage.sdmkny.com/uaa
+        - name: CATALINA_OPTS
+          value: -Dspring.profiles.active=mysql -DUAA_CONFIG_YAML=/etc/uaa/uaa.yml
+        - name: uaa.server
+          value: uaa-stage.sdmkny.com
+        - name: database.url
+          value: jdbc:mysql://rm-bp1ggm262x1ut0v63o.mysql.rds.aliyuncs.com:3306/uaa_stage
+        - name: database.username
+          valueFrom:
+            secretKeyRef:
+              name: db-random
+              key: username
+        - name: database.password
+          valueFrom:
+            secretKeyRef:
+              name: db-random
+              key: password
+        - name: UAA_CONFIG_PATH
+          value: /etc/uaa/

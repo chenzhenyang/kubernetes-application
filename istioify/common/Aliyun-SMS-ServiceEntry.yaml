@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: aliyun-dysmsapi-serviceentry
+spec:
+  hosts:
+  - dysmsapi.aliyuncs.com
+  location: MESH_EXTERNAL
+  ports:
+  - name: http
+    number: 80
+    protocol: http
+  resolution: DNS

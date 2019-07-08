@@ -1,0 +1,22 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: sms-micro-viewer
+  namespace: fengxin58-common-stage
+spec:
+  rules:
+  - services: ["sms-micro.fengxin58-common-stage.svc.cluster.local"]
+    methods: ["GET"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: bind-sms-micro-viewer
+  namespace: fengxin58-common-stage
+spec:
+  subjects:
+  - properties:
+      request.auth.claims[scope]: "openid"
+  roleRef:
+    kind: ServiceRole
+    name: "sms-micro-viewer"

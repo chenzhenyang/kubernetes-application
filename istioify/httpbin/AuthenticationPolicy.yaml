@@ -1,0 +1,14 @@
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: "jwt-example"
+spec:
+  targets:
+  - name: httpbin
+  peers:
+  - mtls: {}
+  origins:
+  - jwt:
+      issuer: "https://uaa-stage.sdmkny.com/uaa/oauth/token"
+      jwksUri: "https://uaa-stage.sdmkny.com/uaa/token_keys"
+  principalBinding: USE_ORIGIN

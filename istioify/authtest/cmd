@@ -1,0 +1,14 @@
+kubectl exec $(kubectl get pod -l app=sleep -n fengxin58-common-stage -o jsonpath={.items..metadata.name}) -c sleep -n fengxin58-common-stage -- curl http://httpbin.fengxin58-common-stage:8000/ip -s -o /dev/null -w "%{http_code}\n" --header "Authorization: Bearer $TOKEN"
+
+
+curl 'http://uaa-stage.sdmkny.com/uaa/oauth/token' -i -X POST -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: application/json' -d 'client_id=admin&client_secret=adminsecret&grant_type=client_credentials&response_type=token'
+
+
+curl 'http://uaa-stage.sdmkny.com/uaa/oauth/token' -i -X POST \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -H 'Accept: application/json' \
+    -d 'client_id=oauth_showcase_password_grant&client_secret=secret&grant_type=password&username=marissa&password=koala&token_format=jwt&response_type=token'
+
+
+
+curl 'http://uaa-stage.sdmkny.com/uaa/check_token' -i -u 'app:appclientsecret' -X POST     -d 'token='

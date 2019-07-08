@@ -1,0 +1,41 @@
+# 这一指标代表从客户端到服务器的字节数
+apiVersion: "config.istio.io/v1alpha2"
+kind: metric
+metadata:
+  name: redisreceivedbytes
+  namespace: default
+spec:
+  value: connection.received.bytes | 0 # uses a TCP-specific attribute
+  dimensions:
+    source_name: source.name | "unknown"
+    destination_name: destination.name | "unknown"
+  monitoredResourceType: '"UNSPECIFIED"'
+---
+# 配置 Prometheus 的 Handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: prometheus
+metadata:
+  name: redishandler
+  namespace: default
+spec:
+  metrics:
+  - name: redis_received_bytes # Prometheus metric name
+    instance_name: redisreceivedbytes.metric.default # Mixer instance name (fully-qualified)
+    kind: COUNTER
+    label_names:
+    - source_name
+    - destination_name
+---
+# 这里定义一个 rule，把 metric 发送给 Prometheus handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: redispron
+  namespace: default
+spec:
+  match: context.protocol == "tcp"
+         && destination.service.host == "redis.default.svc.cluster.local"
+  actions:
+  - handler: redishandler.prometheus
+    instances:
+    - redisreceivedbytes.metric

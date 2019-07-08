@@ -1,0 +1,27 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: service-viewer
+  namespace: fengxin58-common-stage
+spec:
+  rules:
+  - services: ["*"]
+    methods: ["GET"]
+    constraints:
+    - key: "destination.labels[app]"
+      values: ["sms-micro","httpbin"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: bind-service-viewer
+  namespace: fengxin58-common-stage
+spec:
+  subjects:
+  - properties:
+      source.namespace: "istio-system"
+  - properties:
+      source.namespace: "fengxin58-common-stage"
+  roleRef:
+    kind: ServiceRole
+    name: "service-viewer"

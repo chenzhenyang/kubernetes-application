@@ -1,0 +1,41 @@
+# 指标 instance 的配置
+apiVersion: "config.istio.io/v1alpha2"
+kind: metric
+metadata:
+  name: doublerequestcount
+  namespace: istio-system
+spec:
+  value: "2" # 每个请求计数两次
+  dimensions:
+    source: source.service | "unknown"
+    destination: destination.service | "unknown"
+    message: '"twice the fun!"'
+  monitored_resource_type: '"UNSPECIFIED"'
+---
+# prometheus handler 的配置
+apiVersion: "config.istio.io/v1alpha2"
+kind: prometheus
+metadata:
+  name: doublehandler
+  namespace: istio-system
+spec:
+  metrics:
+  - name: double_request_count # Prometheus 指标名称
+    instance_name: doublerequestcount.metric.istio-system # Mixer Instance 名称（全限定名称）
+    kind: COUNTER
+    label_names:
+    - source
+    - destination
+    - message
+---
+# 将指标 Instance 发送给 prometheus handler 的 rule 对象
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: doubleprom
+  namespace: istio-system
+spec:
+  actions:
+  - handler: doublehandler.prometheus
+    instances:
+    - doublerequestcount.metric

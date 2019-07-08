@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - "httpbin.sdmkny.com"
+    port:
+      name: https-httpbin
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+  - hosts:
+    - "httpbin.sdmkny.com"
+    port:
+      name: http-httpbin
+      number: 80
+      protocol: HTTP

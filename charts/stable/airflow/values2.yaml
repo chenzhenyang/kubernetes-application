@@ -1,0 +1,40 @@
+airflow:
+  fernet_key: "j0PNE8131Vx-ix7BsNDwskFUlnLa00mWU17BRujVcdY="
+  timezone: Asia/Shanghai
+  image:
+    repository: registry.cn-zhangjiakou.aliyuncs.com/airflow/airflow
+    tag: latest
+    pull_policy: IfNotPresent
+  logs: 
+    persistence: 
+      enabled: true
+      existingClaim: airflow-logs3
+  dags:
+    persistence:
+      enabled: false
+    git:
+      url: https://github.com/chenzhenyang/airflow.git
+      branch: master
+      subpath: airflow/contrib/example_dags
+      username: 18765862610@163.com
+      password: tb305774
+      wait: 60
+  kubernetes:
+    delete_worker_pods: true
+  rbac: 
+    enabled: true
+    users: 
+    - firstname: jon
+      lastname: airflow
+      email: airflow@apache.org
+      username: airflow
+      role: Admin
+      password: airflow
+postgresql:
+  enabled: true
+  postgresUser: root
+  postgresPassword: root
+  postgresDatabase: airflow
+  persistence:
+    enabled: false
+    accessMode: ReadWriteOnce

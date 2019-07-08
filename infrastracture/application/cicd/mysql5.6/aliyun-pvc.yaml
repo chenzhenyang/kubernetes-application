@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-ci
+  namespace: ci
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: alicloud-disk-ssd
+  resources:
+    requests:
+      storage: 40Gi

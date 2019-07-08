@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: uaa
+spec:
+  hosts:
+  - "uaa-stage.sdmkny.com"
+  gateways:
+  - uaa-gateway
+  http:
+  - route:
+    - destination:
+        host: uaa
+        subset: V4180

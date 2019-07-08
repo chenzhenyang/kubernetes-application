@@ -1,0 +1,18 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis-cli
+spec:
+  selector:
+    matchLabels:
+      k8s-app: redis-cli
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: redis-cli
+        app: redis-cli
+    spec:
+      containers:
+      - name: redis-cli
+        image: redis:3.2

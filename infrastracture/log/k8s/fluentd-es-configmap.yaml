@@ -1,0 +1,81 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: fluentd-es-config-v0.1.4
+  namespace: kube-system
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+    </system>
+  containers.input.conf: |-
+    <match raw.kubernetes.**>
+      @id raw.kubernetes
+      @type detect_exceptions
+      remove_tag_prefix raw
+      message log
+      stream stream
+      multiline_flush_interval 5
+      max_bytes 500000
+      max_lines 1000
+    </match>
+    <source>
+      @id fluentd-containers.log
+      @type tail
+      path /var/log/containers/*.log
+      pos_file /var/log/es-containers.log.pos
+      time_format %Y-%m-%dT%H:%M:%S.%NZ
+      tag raw.kubernetes.*
+      read_from_head true
+      <parse>
+        @type multi_format
+        <pattern>
+          format json
+          time_key time
+          time_format %Y-%m-%dT%H:%M:%S.%NZ
+        </pattern>
+        <pattern>
+          format /^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/
+          time_format %Y-%m-%dT%H:%M:%S.%N%:z
+        </pattern>
+      </parse>
+    </source>  
+  system.input.conf: |-
+    <source>
+      @id docker.log
+      @type tail
+      format /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=($<status_code>\d+))?/
+      path /var/log/docker.log
+      pos_file /var/log/es-docker.log.pos
+      tag docker
+    </source>
+
+  forward.input.conf: |-
+    <source>
+      @type forward
+    </source>
+
+  output.conf: |-
+    <filter kubernetes.**>
+      @type kubernetes_metadata
+      ca_file /etc/kubernetes/pki/apiserver-ca.crt
+      verify_ssl false
+    </filter>
+
+    <match **>
+      @id elasticsearch
+      @type elasticsearch
+      @log_level info
+      include_tag_key true
+      host elasticsearch-logging.kube-system
+      port 9200
+      logstash_format true
+      buffer_chunk_limit 2M
+      buffer_queue_limit 8
+      flush_interval 5s
+      max_retry_wait 30
+      disable_retry_limit
+      num_threads 2
+    </match>

@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: aliyun-mysql-serviceentry
+spec:
+  hosts:
+  - rm-bp1ggm262x1ut0v63o.mysql.rds.aliyuncs.com
+  location: MESH_EXTERNAL
+  ports:
+  - name: tcp
+    number: 3306
+    protocol: tcp
+  resolution: DNS
