@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: oracle
+spec:
+  selector:
+    matchLabels:
+      k8s-app: oracle
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: oracle
+        app: oracle
+    spec:
+      containers:
+      - name: oracle
+        image: registry.cn-hangzhou.aliyuncs.com/fengxin58/oracle:11.2
+        ports:
+        - containerPort: 1521

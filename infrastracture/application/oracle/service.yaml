@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oracle
+spec:
+  ports:
+  - name: oracle
+    nodePort: 31521
+    port: 1521
+    protocol: TCP
+    targetPort: 1521
+  selector:
+    k8s-app: oracle
+  type: LoadBalancer

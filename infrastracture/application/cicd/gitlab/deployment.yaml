@@ -1,38 +1,47 @@
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  namespace: ci
-  name: gitlab
-spec:
-  selector:
-    matchLabels:
-      app: gitlab
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: gitlab
-    spec:
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-         claimName: gitlab
-      - name: gitlab-rb
-        configMap:
-          name: gitlab.rb
-      containers:
-      - name: gitlab
-        image: gitlab/gitlab-ce:latest
-        ports:
-        - name: https
-          containerPort: 443
-        - name: http
-          containerPort: 80
-        - name: ssh
-          containerPort: 22
-        volumeMounts:
-        - name: gitlab-rb
-          mountPath: /etc/gitlab
-        - name: data
-          mountPath: /var/opt/gitlab
+   apiVersion: apps/v1beta2
+   kind: Deployment
+   metadata:
+     namespace: ci
+     name: gitlab
+   spec:
+     selector:
+       matchLabels:
+         app: gitlab
+     replicas: 1
+     template:
+       metadata:
+         labels:
+           app: gitlab
+       spec:
+         volumes:
+         - name: data
+           persistentVolumeClaim:
+            claimName: gitlab
+         - name: etc
+           persistentVolumeClaim:
+            claimName: gitlab-etc
+         - name: gitlab-rb
+           configMap:
+             name: gitlab
+             items:
+             - key: gitlab.rb
+               path: etc/gitlab/gitlab.rb
+         containers:
+         - name: gitlab
+           image: gitlab/gitlab-ce:11.0.4-ce.0
+           ports:
+           - name: https
+             containerPort: 443
+           - name: http
+             containerPort: 80
+           - name: ssh
+             containerPort: 22
+           volumeMounts:
+           - name: etc
+             mountPath: /etc/gitlab
+           - name: gitlab-rb
+             mountPath: /etc/gitlab/gitlab.rb
+             subPath: etc/gitlab/gitlab.rb
+           - name: data
+             mountPath: /var/opt/gitlab
 

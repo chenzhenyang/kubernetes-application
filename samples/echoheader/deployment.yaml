@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: echoheader
+spec:
+  selector:
+    matchLabels:
+      app: echoheader
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: echoheader
+    spec:
+      containers:
+      - name: echoheader
+        image: registry.cn-hangzhou.aliyuncs.com/fengxin58/spring-boot-tomcat-access-log-sample:0.0.1-SNAPSHOT
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 10001
